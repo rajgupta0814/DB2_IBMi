@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI → PUB400</title>
+
+  <style>
+    :root{
+      --bg0:#060913;
+      --bg1:#0b1224;
+      --card: rgba(15, 23, 42, .55);
+      --card2: rgba(2, 6, 23, .62);
+      --border: rgba(148, 163, 184, .16);
+      --text:#e5e7eb;
+      --muted:#9aa7bd;
+
+      --a1:#22d3ee;
+      --a2:#a78bfa;
+      --danger:#fb7185;
+
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius: 16px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(34,211,238,.25), transparent 60%),
+        radial-gradient(700px 500px at 110% 0%, rgba(167,139,250,.22), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(to right, rgba(148,163,184,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148,163,184,.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,.85), transparent 85%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .container{
+      position:relative;
+      z-index:1;
+      max-width: 980px;
+      margin: 48px auto;
+      padding: 0 18px 40px;
+    }
+
+    .header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 18px;
+    }
+
+    h1{margin:0;font-size:30px;letter-spacing:.2px;line-height:1.1;}
+    .subtitle{margin-top:8px;color:var(--muted);font-size:14px;}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(2,6,23,.45);
+      border: 1px solid var(--border);
+      color:#cbd5e1;
+      font-size:12.5px;
+      white-space:nowrap;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:
+        radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 35%, transparent 60%),
+        linear-gradient(135deg, var(--a1), var(--a2));
+      box-shadow: 0 0 0 3px rgba(34,211,238,.12), 0 0 25px rgba(34,211,238,.22);
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-top: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute; left:0; top:0; right:0; height:2px;
+      background: linear-gradient(90deg, transparent, rgba(34,211,238,.9), rgba(167,139,250,.9), transparent);
+      opacity:.7;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color:#cfe7ff;
+      margin: 2px 0 10px;
+    }
+
+    .hint{
+      color: var(--muted);
+      text-transform:none;
+      letter-spacing:0;
+      font-size:12.5px;
+    }
+
+    form{margin:0}
+
+    .input-wrap{
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.42);
+      padding: 12px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .input-wrap:focus-within{
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.12);
+    }
+
+    textarea{
+      width:100%;
+      min-height: 100px;
+      resize: vertical;
+      background: transparent;
+      color: var(--text);
+      border: none;
+      outline: none;
+      font-size: 15px;
+      line-height: 1.45;
+      padding: 0;
+    }
+
+    textarea::placeholder{ color: rgba(148,163,184,.75); }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 12px;
+      flex-wrap:wrap;
+    }
+
+    .meta{
+      font-size: 12.5px;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      color:#cbd5e1;
+    }
+
+    button{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 11px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(34,211,238,.35);
+      background:
+        radial-gradient(120% 160% at 20% 20%, rgba(34,211,238,.45), transparent 55%),
+        radial-gradient(120% 160% at 80% 0%, rgba(167,139,250,.35), transparent 55%),
+        linear-gradient(135deg, rgba(34,211,238,.18), rgba(167,139,250,.16));
+      color: #eaf7ff;
+      font-weight: 650;
+      cursor:pointer;
+      transition: transform .08s ease, filter .2s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+
+    button:active{ transform: translateY(1px); }
+    button:disabled{ opacity:.6; cursor:not-allowed; }
+
+    .spark{
+      width: 12px; height: 12px;
+      background: linear-gradient(135deg, var(--a1), var(--a2));
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(34,211,238,.22);
+      transform: rotate(12deg);
+    }
+
+    /* ===== Output panels: compact SQL box + big Result box ===== */
+    pre{
+      margin:0;
+      background: rgba(2,6,23,.45);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13.5px;
+      line-height: 1.55;
+      white-space: pre;
+      word-break: normal;
+      color: #dbeafe;
+    }
+
+    /* SQL (Generated SQL) → smaller like your red box */
+    #sql{
+      min-height: 90px;
+      max-height: 180px;
+    }
+
+    /* Result → bigger */
+    #res{
+      min-height: 420px;
+      max-height: 70vh;
+    }
+
+    .panel-actions{display:flex; gap:10px; align-items:center;}
+
+    .btn-mini{
+      border: 1px solid rgba(148,163,184,.22);
+      background: rgba(2,6,23,.35);
+      color:#cbd5e1;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .btn-mini:hover{ border-color: rgba(34,211,238,.35); }
+
+    .error{
+      border-color: rgba(251,113,133,.5) !important;
+      box-shadow: 0 0 0 4px rgba(251,113,133,.10);
+      color: #fecdd3;
+    }
+
+    .loading{opacity:.65; pointer-events:none;}
+
+    .footer{
+      margin-top: 26px;
+      text-align:center;
+      color: rgba(148,163,184,.8);
+      font-size: 12.5px;
+    }
+
+    @media (max-width: 560px){
+      h1{font-size:24px;}
+      .badge{display:none;}
+      .card{padding:14px;}
+      button{width:100%; justify-content:center;}
+      .actions{align-items:stretch;}
+      #sql{ min-height: 80px; max-height: 160px; }
+      #res{ min-height: 360px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div>
+        <h1>Ask AI → DB2 (pub400)</h1>
+        <div class="subtitle">Natural language → Safe IBM i SQL → Live Results</div>
+      </div>
+
+      <div class="badge" title="Secure prompt-to-SQL flow">
+        <span class="dot"></span>
+        AI-Assisted SQL Console
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>Prompt</span>
+        <span class="hint">Write what you need. We’ll generate SQL safely.</span>
+      </div>
+
+      <form id="f">
+        {% csrf_token %}
+
+        <div class="input-wrap">
+          <textarea name="question" placeholder="e.g. show employee names starting with R from emppf"></textarea>
+        </div>
+
+        <div class="actions">
+          <div class="meta">
+            <span class="kbd">Tip</span>
+            Keep it specific: fields, table name, filters.
+          </div>
+
+          <button id="btn" type="submit">
+            <span class="spark"></span>
+            Ask AI
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>Generated SQL</span>
+        <div class="panel-actions">
+          <button class="btn-mini" type="button" id="copySql">Copy</button>
+          <button class="btn-mini" type="button" id="clearSql">Clear</button>
+        </div>
+      </div>
+      <pre id="sql">—</pre>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>Result</span>
+        <div class="panel-actions">
+          <button class="btn-mini" type="button" id="copyRes">Copy</button>
+          <button class="btn-mini" type="button" id="clearRes">Clear</button>
+        </div>
+      </div>
+      <pre id="res">—</pre>
+    </div>
+
+    <div class="footer">
+      IBM i • DB2 • pub400 • AI UI • Secure Prompt → SQL
+    </div>
+
+  </div>
+
+  <script>
+    const form = document.getElementById("f");
+    const sqlBox = document.getElementById("sql");
+    const resBox = document.getElementById("res");
+    const btn = document.getElementById("btn");
+
+    const copySql = document.getElementById("copySql");
+    const clearSql = document.getElementById("clearSql");
+    const copyRes = document.getElementById("copyRes");
+    const clearRes = document.getElementById("clearRes");
+
+    function setLoading(isLoading) {
+      btn.disabled = isLoading;
+      btn.innerHTML = isLoading
+        ? '<span class="spark"></span> Running...'
+        : '<span class="spark"></span> Ask AI';
+      form.classList.toggle("loading", isLoading);
+    }
+
+    function copyToClipboard(text){
+      if (!text || text === "—") return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+    }
+
+    copySql.onclick = () => copyToClipboard(sqlBox.textContent);
+    copyRes.onclick = () => copyToClipboard(resBox.textContent);
+
+    clearSql.onclick = () => (sqlBox.textContent = "—");
+    clearRes.onclick = () => {
+      resBox.textContent = "—";
+      resBox.classList.remove("error");
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+
+      sqlBox.textContent = "—";
+      resBox.textContent = "—";
+      resBox.classList.remove("error");
+
+      setLoading(true);
+
+      try {
+        const response = await fetch("/ask/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+          },
+          body: new FormData(form)
+        });
+
+        const data = await response.json();
+
+        sqlBox.textContent = data.sql || "—";
+
+        if (data.error) {
+          resBox.textContent = data.error;
+          resBox.classList.add("error");
+        } else {
+          resBox.textContent = data.result || "No data returned";
+        }
+      } catch (err) {
+        resBox.textContent = "Request failed: " + err;
+        resBox.classList.add("error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Ctrl/Cmd + Enter to submit
+    document.querySelector('textarea[name="question"]').addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") form.requestSubmit();
+    });
+  </script>
+</body>
+</html>
